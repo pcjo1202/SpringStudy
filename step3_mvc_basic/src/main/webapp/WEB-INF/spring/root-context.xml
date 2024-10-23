@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<!-- 모델 관련 설정 -->
+	<context:property-placeholder
+		location="classpath:db.properties" />
+
+	<context:component-scan
+		base-package="com.ssafy.model"></context:component-scan>
+	<!-- dbcp -->
+	<!--<bean id="dbcpdataSource" class="org.apache.commons.dbcp2.BasicDataSource"> 
+		<property name="driverClassName"> <value>com.mysql.cj.jdbc.Driver</value> 
+		</property> <property name="url"> <value>jdbc:mysql://localhost:3306/scott?serverTimeZone=UTC</value> 
+		</property> <property name="username" value="ssafy"></property> <property 
+		name="password" value="ssafy"></property> </bean> -->
+
+	<!-- Hikari -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
+		p:driverClassName="${db.driver}" p:jdbcUrl="${db.url}"
+		p:username="${db.username}" p:password="${db.password}">
+	</bean>
+
+	<!-- <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"> <property 
+		name="driverClassName"> <value>${db.driver}</value> </property> <property 
+		name="jdbcUrl"> <value>${db.url}</value> </property> <property name="username"> 
+		<value>${db.username}</value> </property> <property name="password"> <value>${db.password}</value> 
+		</property> </bean> -->
+
+	<!-- mybatis 세팅을 위한 bean 등록 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:mapperLocations="classpath:mapper/**/*.xml"
+		p:typeAliasesPackage="com.ssafy.model.dto"
+		p:dataSource-ref="dataSource"/>
+
+	<bean class="org.mybatis.spring.SqlSessionTemplate"
+		c:sqlSessionFactory-ref="sqlSessionFactory" />
+
+</beans>
